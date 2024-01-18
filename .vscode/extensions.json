@@ -3,7 +3,9 @@
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
     "vue.volar",
-    "wayou.vscode-todo-highlight"
+    "wayou.vscode-todo-highlight",
+    "apollographql.vscode-apollo",
+    "apollographql.vscode-apollo"
   ],
   "unwantedRecommendations": [
     "octref.vetur",

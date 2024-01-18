@@ -2,10 +2,14 @@
   <router-view />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { onMounted } from 'vue'
+import { useMzn } from './composables/useMzn'
+const {
+  fetchSearchProperties
+} = useMzn()
 
-export default defineComponent({
-  name: 'App'
+onMounted(() => {
+  fetchSearchProperties()
 })
 </script>
