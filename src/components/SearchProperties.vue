@@ -1,7 +1,5 @@
 <template>
 <q-list bordered separator>
-  <div v-if="!viewProps.isReadySearchProperties">Loading...</div>
-  <div v-else>
     <q-table
       class="mzn-table"
       virtual-scroll
@@ -12,17 +10,23 @@
       row-key="id"
       title="Znalezione nieruchomości"
       :rows="viewProps.searchProperties"
-      :columns="columns" />
-      <!-- <q-item v-for="(property) in viewProps.searchProperties" :key="property.id" clickable v-ripple>
-        <q-item-section><SearchProperty
-          :property="property"
-          /></q-item-section>
-      </q-item> -->
-    </div>
+      :columns="columns"
+      :loading="!viewProps.isReadySearchProperties" >
+      <template v-slot:top>
+        <q-input filled dense label="Cena od" v-model="priceFrom" id="filterPriceFrom" type="number" />
+        <q-space />
+        <q-input filled dense label="Cena do" v-model="priceTo" id="filterPriceTo" type="number" />
+        <q-space />
+        <q-input filled dense label="Pokoje od" v-model="roomsFrom" id="filterRoomsFrom" type="number" />
+        <q-space />
+        <q-input filled dense label="Pokoje do" v-model="roomsTo" id="filterRoomsTo" type="number" />
+        <q-btn color="primary" icon="search" label="Szukaj" @click="search" />
+      </template>
+      </q-table>
   </q-list>
 </template>
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 // import SearchProperty from './SearchProperty.vue'
 import { useMzn } from 'stores/mzn'
 
@@ -39,22 +43,19 @@ const columns = [{
   name: 'locationShort',
   label: 'Nazwa lokacji',
   align: 'left',
-  field: 'locationShort',
-  sortable: true
+  field: 'locationShort'
 },
 {
   name: 'numberOfRooms',
   label: 'Liczba pokoi',
   align: 'left',
-  field: 'numberOfRooms',
-  sortable: true
+  field: 'numberOfRooms'
 },
 {
   name: 'price',
   label: 'Cena',
   align: 'left',
-  field: 'price',
-  sortable: true
+  field: 'price'
 },
 {
   name: 'totalArea',
@@ -62,6 +63,29 @@ const columns = [{
   align: 'left',
   field: 'totalArea'
 }]
+const search = () => {
+  mzn.searchProperties = []
+  mzn.fetchSearchProperties()
+}
+
+const priceFrom = ref(mzn.priceFrom),
+  priceTo = ref(mzn.priceTo),
+  roomsFrom = ref(mzn.roomsFrom),
+  roomsTo = ref(mzn.roomsTo)
+
+watchEffect(() => {
+  mzn.priceFrom = priceFrom
+})
+watchEffect(() => {
+  mzn.priceTo = priceTo
+})
+watchEffect(() => {
+  mzn.roomsFrom = roomsFrom
+})
+watchEffect(() => {
+  mzn.roomsTo = roomsTo
+})
+
 const viewProps = computed(() => {
   const properties = mzn.searchProperties.map(property => {
     return {
@@ -75,6 +99,7 @@ const viewProps = computed(() => {
   return {
     searchProperties: properties,
     isReadySearchProperties: mzn.isReadySearchProperties
+
   }
 })
 function filterOutMissingData (arr) {
@@ -114,5 +139,10 @@ function filterOutMissingData (arr) {
   tbody {
     /* height of all previous header rows */
     scroll-margin-top: 48px
+  }
+  .q-btn {
+    position: relative;
+    margin-left: 20px;
+    height: 30px;
   }
 </style>

@@ -14,14 +14,25 @@ const endpoint = process.env.GRAPHQL_URI,
 
 export const useMzn = defineStore('mzn', {
   state: () => ({
-    searchProperties: []
+    searchProperties: [],
+    priceFrom: null,
+    priceTo: null,
+    roomsFrom: null,
+    roomsTo: null
   }),
   getters: {
     isReadySearchProperties: (state) => !!state.searchProperties.length
   },
   actions: {
     async fetchSearchProperties () {
-      const result = await graphQLClient.request(SEARCH_PROPERTIES_QUERY)
+      const variables = {
+        priceFrom: this.priceFrom,
+        priceTo: this.priceTo,
+        numberOfRoomsFrom: parseInt(this.roomsFrom),
+        numberOfRoomsTo: parseInt(this.roomsTo)
+      }
+      console.log(variables)
+      const result = await graphQLClient.request(SEARCH_PROPERTIES_QUERY, variables)
       this.searchProperties = result.searchProperties.nodes
     }
   }
