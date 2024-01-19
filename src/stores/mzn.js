@@ -12,7 +12,7 @@ const endpoint = process.env.GRAPHQL_URI,
     }
   })
 
-export const useMznStore = defineStore('mzn', {
+export const useMzn = defineStore('mzn', {
   state: () => ({
     searchProperties: []
   }),
